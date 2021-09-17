@@ -1,5 +1,5 @@
-import CardsList from "./components/cards-list";
-import useEffect from "react";
+import CardsList from "./Components/CardsList";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 export const App = () => {
@@ -10,34 +10,37 @@ export const App = () => {
   const handleDeckRequest = () => {
     fetch("https://deckofcardsapi.com/api/deck/new/")
       .then((res) => res.json())
-      .then((res) => console.log(res));
+      .then((res) => setDeck(res.deck_id));
   };
 
   const handleCardsRequest = (deckId) => {
-    fetch("https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=52")
+    fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=52`)
       .then((res) => res.json())
       .then((res) => setCardsList([...res.cards]));
   };
 
   const handleShowDeck = () => {
-    setShowDeck(false);
+    setShowDeck(true);
+    handleDeckRequest();
   };
 
   useEffect(() => {
     handleDeckRequest();
-  }, [deck]);
+  }, []);
 
   useEffect(() => {
     if (deck) handleCardsRequest(deck);
-  }, []);
+  }, [deck]);
 
   return (
     <div className="main-container">
-      <h1 className="main-title">Debugue para ver o baralho</h1>
-      <button onChange={handleShowDeck} className="new-deck-button">
+      <h1 className="main-title">Baralho</h1>
+      <button onClick={handleShowDeck} className="new-deck-button">
         Novo baralho
       </button>
-      {ShowDeck & <CardsList cardsList={cardsList} />}
+      {showDeck && <CardsList cardsList={cardsList} />}
     </div>
   );
 };
+
+export default App;
